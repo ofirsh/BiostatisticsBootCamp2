@@ -1,0 +1,147 @@
+# Solution by Ofir Shalev, January 2015
+---------------------------------------
+
+# Question 1
+# ----------
+# In a random sample of 100 patients at a clinic, you would like to test whether the mean RDI is x or more using a one sided 5% type 1 error rate. 
+# The sample mean RDI had a mean of 12 and a standard deviation of 4. 
+# What value of x (testing H0:μ=x versus Ha:μ>x) would you reject for?
+
+# Answer 1
+----------
+standard.deviation <- 4
+mean <- 12
+n <- 100
+alpha <- 0.05
+criticalValue <- qt(1-alpha,df = n-1)
+criticalValue <- qnorm(1-alpha)
+x.reject <- mean - (criticalValue * standard.deviation) / sqrt(n)
+
+# ??????
+
+
+# Question 2
+# ----------
+# A pharmaceutical company is interested in testing a potential blood pressure lowering medication. 
+# Their first examination considers only subjects that received the medication at baseline then two weeks later. The data are as follows (SBP in mmHg)
+
+# Baseline    Week 2
+# 140	138
+# 138	136
+# 150	148
+# 148	146
+# 135	133
+# Test the hypothesis that there was a mean reduction in blood pressure. 
+# Compare the difference between a paired and unpaired test for a two sided 5% level test.
+
+# Answer 2
+# ----------
+# When comparing groups, first determine whether observations are paired or not
+# When dealing a single set of paired data, one strategy is to take the difference between the paired observation 
+#   and do a one-sample t test of H0 : μd = 0 versus Ha : μd != 0 (or one of the other two alternatives)
+
+baseline <- c(140,138,150,148,135)
+week2 <- c(138,136,148,146,133)
+
+diff <- baseline - week2
+n <- length(diff)
+m <- mean(diff) # 2
+s <- sd(diff) # 0
+# testStat <- sqrt(n) * mean(m) / s  # can't calculate, as sd is zero and can't divide by zero
+
+# on the limit s -> 0, testStat is growing to infinity, which means that we reject the null hypothesis that both are the same
+
+# Hence, can't reject the paired 
+
+# The extension to two independent groups should come as no surprise
+
+sd.baseline <- sd(baseline) # 6.496153
+sd.week2 <- sd(week2) # 6.496153
+
+sd.pooled <- sd.baseline*sqrt( 1/length(baseline) + 1/length(week2) )
+
+z <- ( mean(week2) - mean(baseline) ) / (  sd.pooled ) #  -0.4867924
+
+pnormal(z)  # 31%, can't reject the null hypothese
+
+sx.div.nx = (sd.baseline ^ 2) / length(sd.baseline)
+sy.div.ny = (sd.week2 ^ 2) / length(sd.week2)
+
+df <- ( sx.div.nx + sy.div.ny ) ^ 2 /  (  ( (sx.div.nx^2) / (length(sx.div.nx) - 1) )  +  ( (sy.div.ny^2) / (length(sy.div.ny) - 1) ) ) # 0
+
+# Reject for the paired; fail to reject for the unpaired
+
+
+# Question 3
+# ----------
+
+# Brain volumes for 9 men yielded a 90 % confidence interval of 1,077 cc to 1,123 cc. Would you reject in a two sided 5% hypothesis test of H0:μ=1,078?
+
+# Options:
+# You would reject the null hypothesis.
+# It can not be ascertained from the information given.
+# You would fail to reject the null hypothesis.
+
+# Answer 3
+# --------
+
+# 90% confidence interval means that taking a random sample of 9 men, 90% of the average brain volumes will fall within the range of 1,077 to 1,123
+# It also means that we can't reject a two sided 5% hypothesis test of H0:μ=1,078, as it is within the range of the null hypothesis
+# So the answer is that "You would fail to reject the null hypothesis."
+
+
+# Question 4
+# ----------
+# In an effort to improve efficiency, hospital administrators are evaluating a new triage system for their emergency room. In an validation study of the system, 5 patients were tracked in a mock (simulated) ER under the new and old triage system. Their waiting times in natural log of hours were:
+#     
+#     Subject    1	2	3	4	5
+#         New	0.929	-1.745	1.677	0.701	0.128
+#         Old	2.233	-2.513	1.204	1.938	2.533
+# 
+# Give a Pvalue for the test of the hypothesis that the new system resulted in lower waiting times for a one sided t test.
+# 
+# 0.1405
+# 0.2597
+# 0.5194
+# 0.281
+
+# Answer
+# ------
+
+new.log <- c(0.929,-1.745,1.677,0.701,0.128)
+old.log <- c(2.233,-2.513,1.204,1.938,2.533)
+
+new.hos <- exp(new.log)
+old.hos <- exp(old.log)
+
+delta <- new.hos - old.hos
+
+t.test(x=new.log,y=old.log,alternative = c("less"), paired = TRUE)
+# data:  new.log and old.log
+# t = -1.2452, df = 4, p-value = 0.1405
+# alternative hypothesis: true difference in means is less than 0
+# 95 percent confidence interval:
+#     -Inf 0.5276511
+
+# The answer is p-value = 0.1405
+
+
+# Question 5
+# ----------
+# Refer to the previous question. Give a 95% T confidence interval for the ratio of the waiting times (recall that the measurements were natural logged).
+# 
+# Here's the data and setting again. 
+
+t.test(x=new.log,y=old.log,alternative = c("two.sided"), paired = TRUE,conf.level = 0.95)
+
+# data:  new.log and old.log
+# t = -1.2452, df = 4, p-value = 0.281
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#     -2.3932482  0.9112482
+# sample estimates:
+
+exp(-2.3932482) # 0.09133254
+exp(0.9112482) # 2.487425
+
+
