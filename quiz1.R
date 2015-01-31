@@ -145,3 +145,118 @@ exp(-2.3932482) # 0.09133254
 exp(0.9112482) # 2.487425
 
 
+# Question 6
+# ----------
+# Suppose that 18 obese subjects were randomized, 9 each, to a new diet pill and a placebo. Subjects’ 
+#     body mass indices (BMIs) were measured at a baseline and again after having received the treatment
+#     or placebo for four weeks. 
+# The average difference from follow-up to the baseline (followup - baseline) was −3 kg/m2 for 
+# the treated group and 1 kg/m2 for the placebo group. 
+# The corresponding standard deviations of the differences was 1.5 kg/m2 for the treatment group 
+#     and 1.8 kg/m2 for the placebo group. 
+# Does the change in BMI over the two year period appear to differ between the treated and placebo 
+#     groups? Assuming normality of the underlying data and a common population variance, 
+#     give a pvalue for a two sided t test.
+# 
+# Around 0.01
+# Around 0.0001
+# Around 0.00005
+# Around 0.1
+# Around 0.001
+# 
+# Answer
+# -----
+#
+
+treated.delta.mean <- -3.0
+placebo.delta.mean <- 1
+
+treated.sd <- 1.5
+placebo.sd <- 1.8
+
+nx <- 9
+ny <- 9
+
+Sx.nx <- (treated.sd ^ 2) / nx
+Sy.ny <- (placebo.sd ^ 2) / ny
+
+# ...follows a standard normal distribution for large nx and ny . It follows an
+# approximate Students T distribution if the Xi and Yi are normally distributed
+test.stat <- ( treated.delta.mean - placebo.delta.mean ) / ( sqrt( Sx.nx + Sy.ny )  ) # -5.121475
+
+# The approximate degrees of freedom are:
+
+df <- ( ( Sx.nx + Sy.ny ) ^ 2 ) / ( Sx.nx^2/(nx - 1) + Sy.ny^2/(ny - 1)  ) # 15.4961
+
+p <- pt( q = test.stat, df = df, lower.tail = TRUE )
+
+two.sided.t <- 2 * p   # 0.00011
+
+
+# Question 7
+# ----------
+# Consider a one sided α level single group Z test of H0:μ=μ0 versus Ha:μ>μ0 with the data X¯ for 
+# the sample mean and s for the sample standard deviation with n measurements. 
+# What are the collection of points for which you would fail to reject the hypothesis?
+# 
+# (−∞,X+Z1−αs/n√]
+# [X+Z1−αs/n√,∞)
+# (−∞,X−Z1−αs/n√]
+# [X−Z1−αs/n√,∞)
+# The confidence interval X¯±Z1−α/2s/n√
+# 
+# Answer
+# ------
+#
+
+# [X+Z(1−α)s/sqrt(n),∞)
+
+
+
+# Question 8
+# -----------
+# Researchers would like to conduct a study of n healthy adults to detect a four year mean brain 
+#   volume loss of .01 mm3. 
+# Assume that the standard deviation of four year volume loss in this population is .04 mm3. 
+# What would be the value of n needded for 90% power of type one error rate of 5% one sided test 
+#   versus a null hypothesis of no volume loss?
+
+# Around 140
+# Around 20
+# Around 100
+# Around 50
+
+# Answer
+# ------
+
+
+# Calculating power
+# Assume that n is large and that we know sigma
+
+miu <- 0.01 
+sd <- 0.04
+alpha <- 0.05
+power <- 0.9
+
+z.alpha <-  qnorm(1-alpha)
+z.power <- qnorm(1-power)
+
+n <- ( ( miu / sd ) * ( z.alpha - z.power ) )^2
+
+
+
+# lets compare with the power test ...
+power.t.test(n = NULL, delta = miu, sd = sd, sig.level = alpha, power = power, type = c("one.sample"), alternative = c("one.sided") )
+
+# n = 139
+
+# result
+# ------
+# One-sample t test power calculation 
+# 
+# n = 138.3856
+# delta = 0.01
+# sd = 0.04
+# sig.level = 0.05
+# power = 0.9
+# alternative = one.sided
