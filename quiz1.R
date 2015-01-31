@@ -243,7 +243,7 @@ z.power <- qnorm(1-power)
 
 n <- ( ( miu / sd ) * ( z.alpha - z.power ) )^2
 
-
+# TODO check why the manual test is not working ...
 
 # lets compare with the power test ...
 power.t.test(n = NULL, delta = miu, sd = sd, sig.level = alpha, power = power, type = c("one.sample"), alternative = c("one.sided") )
