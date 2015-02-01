@@ -13,11 +13,8 @@ standard.deviation <- 4
 mean <- 12
 n <- 100
 alpha <- 0.05
-criticalValue <- qt(1-alpha,df = n-1)
 criticalValue <- qnorm(1-alpha)
-x.reject <- mean - (criticalValue * standard.deviation) / sqrt(n)
-
-# ??????
+x.reject <- mean  - (((criticalValue * standard.deviation)) / sqrt(n))
 
 
 # Question 2
@@ -209,7 +206,7 @@ two.sided.t <- 2 * p   # 0.00011
 # ------
 #
 
-# [X+Z(1−α)s/sqrt(n),∞)
+# (−∞,X+Z1−αs/n‾‾√]
 
 
 
@@ -233,7 +230,7 @@ two.sided.t <- 2 * p   # 0.00011
 # Calculating power
 # Assume that n is large and that we know sigma
 
-miu <- 0.01 
+mu <- 0.01 
 sd <- 0.04
 alpha <- 0.05
 power <- 0.9
@@ -241,14 +238,13 @@ power <- 0.9
 z.alpha <-  qnorm(1-alpha)
 z.power <- qnorm(1-power)
 
-n <- ( ( miu / sd ) * ( z.alpha - z.power ) )^2
-
-# TODO check why the manual test is not working ...
+n <- ( ( sd / mu ) * ( z.alpha - z.power ) )^2
+# [1] 137.0216
 
 # lets compare with the power test ...
 power.t.test(n = NULL, delta = miu, sd = sd, sig.level = alpha, power = power, type = c("one.sample"), alternative = c("one.sided") )
 
-# n = 139
+# n = 138.3856
 
 # result
 # ------
@@ -260,3 +256,94 @@ power.t.test(n = NULL, delta = miu, sd = sd, sig.level = alpha, power = power, t
 # sig.level = 0.05
 # power = 0.9
 # alternative = one.sided
+
+
+
+# Question 9
+# ----------
+# The Daily Planet ran a recent story about Kryptonite poisoning in the water supply after a recent event in Metropolis. 
+# Their usual field reporter, Clark Kent, called in sick and so Lois Lane reported the stories. 
+# Researchers plan to sample 288 individuals from Metropolis and control city Gotham and will compare mean blood Kryptonite levels (in Lex Luthors per milliliter, LL/ml). 
+# The expect to find a mean difference in LL/ml of around 2. Assoming a two sided Z test of the relevant hypothesis at 5%, what would be the power. 
+# Assume that the standard deviation is 12 for both groups.
+
+# Answer
+# ------
+
+
+n <- 288
+delta <- 2
+alpha <- 0.05
+sd <- 12
+
+power.t.test(n=288,delta=2,sd=12,sig.level=0.05,type=c("two.sample"),alternative = c("two.sided")) 
+
+# Two-sample t test power calculation 
+# 
+# n = 288
+# delta = 2
+# sd = 12
+# sig.level = 0.05
+# power = 0.5146336
+# alternative = two.sided
+
+# answer: 51%
+
+z.1.minus.alpha <- qnorm(1-alpha)
+z.stat <- z.1.minus.alpha - mu * sqrt(n) / sd
+pnorm(q = z.stat,lower.tail = FALSE)
+# [1] 0.881709
+
+
+# Question 10
+# ------------
+# As you increase the type one error rate, α, what happens to power?
+# 
+# The power goes down
+# It is impossible to say
+# Power stays the same
+# The power goes up
+
+# As you increase the type one error rate, alpha is increasing, beta is decreasing and power is increasing
+
+# The power goes up
+
+
+# Question 11
+# -----------
+# Consider a setting with iid data from a N(μ,σ2) distribution testing H0:μ=0 verus Ha:μ>0. 
+# The null hypothesis is rejected if n‾‾√X¯/σ>1.645. What happens to the type I error rate as n goes to infinity?
+# 
+# It is 5% regardless of the size of n
+# It limits to 5%, but can be a different value for small sample sizes
+# It is 10% regardless of the size of n
+# It limits to 10%, but can be a different value for small sample sizes
+
+# Answer
+# ------
+
+# It limits to 5%, but can be a different value for small sample sizes
+
+
+# Question 13
+# ------------
+# Consider a one sample Z test of $H_0 : \mu = \mu_0$ versus $H_a : \mu > \mu_0$. 
+# All else equal, which scenarios will be closer to rejecting the null hypothesis?
+# X¯ is small, μ0 is large, σ is large
+# X¯ is small, μ0 is large, σ is small
+# X¯ is large, μ0 is large, σ is large
+# X¯ is large, μ0 is large, σ is small
+# X¯ is large, μ0 is small, σ is small
+# X¯ is small, μ0 is small, σ is small
+# X¯ is small, μ0 is small, σ is large
+# X¯ is large, μ0 is small, σ is large
+# 
+# Logic:
+#     
+# z = sqrt(n)(x-u)/sigma
+# 
+# Rejecting the null hypothesis requires large z, which means:
+#     Sigma should be small
+#     x-u should be large and positive, so x should be large and u should be small
+# 
+# X¯ is large, μ0 is small, σ is small
