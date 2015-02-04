@@ -55,15 +55,46 @@
 # 1e-3
 
 
-X <- 0.7
-Y <- 0.15
+p1 <- 0.7
+n1 <- 100
+p2 <- 0.15
+n2 <- 100
 
-RR <- X / Y
+RR <- p1 / p2
 
 RR.log <- log(RR) 
+# [1] 1.540445
 
-Standard.Error.Log.RR <- sqrt
 
+
+Standard.Error.Log.RR <- sqrt( ((1-p1)/(p1*n1)) + ((1-p2)/(p2*n2))   )
+# [1] 0.2468854
+
+2 * pnorm(0, mean = RR.log, sd = Standard.Error.Log.RR, lower.tail = TRUE  )
+
+z.1.minus.half.alpha <- RR.log / Standard.Error.Log.RR
+# [1] 6.239516
+
+alpha <- 1 * pnorm(-z.1.minus.half.alpha)
+
+RR <- exp(RR.log)
+# [1] 4.666667 
+
+Standard.Error.RR <- exp(Standard.Error.Log.RR)
+# 1.280032
+
+2 * pnorm(1, mean = RR, sd = Standard.Error.RR, lower.tail = TRUE  )
+
+# so the mean of the ratio is 4.666667, with sd of 1.280032 - Professors will be higer than the 2nd group
+#   as long as the (ratio - sd * w*z > 0)
+
+z <- RR / Standard.Error.RR
+# [1] 3.645741
+
+p.inside <- 1 - 2 * pnorm( q = -z, lower.tail = TRUE  )
+
+alpha <- 1 - p.inside
+# [1] 0.0001333111
 
 # Question 4
 # ----------
@@ -83,6 +114,21 @@ Standard.Error.Log.RR <- sqrt
 # Around 0.25
 # Around 1.05
 
+n1 <- 45+21
+p1 <- 45/n1
+
+n2 <- 15+52
+p2 <- 15/n2
+
+RR <- p1 / p2
+
+RR.log <- log(RR) 
+
+Standard.Error.Log.RR <- sqrt( ((1-p1)/(p1*n1)) + ((1-p2)/(p2*n2))   )
+# 0.2425119
+
+Standard.Error.RR <- exp(Standard.Error.Log.RR) 
+# [1] 1.274446
 
 # Question 5
 # ----------
