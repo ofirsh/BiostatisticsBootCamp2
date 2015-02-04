@@ -7,6 +7,16 @@
 # What is the delta method asymptotic standard error of sqrt(phat) where phat is X/n where 
 # X∼Binomial(n,p)?
 
+# Answer 1 (pseudo code)
+# ----------------------
+
+# pseudo algorithm, just to show the method - not running code!
+
+# SE.theta = sqrt( p*(1-p) / n  )
+# Asymptotic standard error of f(theta) can be estimated with f'(theta) * SE.theta (lecture 6, page 4)
+# f(x) = sqrt(x)
+# f'(x) = 0.5 * (1 / sqrt(x) )
+# standard error: sqrt( (1-p)/(4*n) )
 
 # Question 2
 # ----------
@@ -23,6 +33,7 @@
 # What should you set the odds so that, regardless of the outcome of the game, you neither win nor lose money? 
 # Note, in this case, the betters place their bets and learn the odds later. 
 # Note also, the odds are something that you set in this case, not a direct measure of probability or randomness.
+
 
 
 # Question 3
@@ -42,6 +53,16 @@
 # 1e-14
 # 1e-5
 # 1e-3
+
+
+X <- 0.7
+Y <- 0.15
+
+RR <- X / Y
+
+RR.log <- log(RR) 
+
+Standard.Error.Log.RR <- sqrt
 
 
 # Question 4
