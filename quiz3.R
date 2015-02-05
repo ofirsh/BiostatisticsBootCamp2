@@ -89,6 +89,14 @@ fisher.test(dat, alternative = "greater")
 
 n <- 140 + 10 + 50
 
+observed <- c(140,10,50)
+expected <- c( 0.53 * n, 0.35 * n, 0.12 * n )
+
+chi.square <- sum ( (observed - expected)^2 / expected )
+# [1] 90.5009
+pchisq(chi.square,2, lower.tail = FALSE)
+# [1] 2.22833e-20
+
 dat <- matrix(c( 0.53 * n, 0.35 * n, 0.12 * n,   140,10,50), nrow = 3, byrow = FALSE)
 #      [,1] [,2]
 # [1,]  106  140
@@ -138,14 +146,17 @@ chi.square <-  ((Observed.11 - Expected.11)^2)/Expected.11 +
 # [1] 58.83432
 
 pchisq(chi.square,2, lower.tail = FALSE)
-
+# [1] 1.676059e-13
 
 chisq.test(dat)
 
+> chisq.test(dat)
+# 
 # Pearson's Chi-squared test
 # 
 # data:  dat
-# X-squared = 64.0823, df = 2, p-value = 1.215e-14
+# X-squared = 58.8343, df = 2, p-value = 1.676e-13
+
 
 # Question 4
 # ----------
