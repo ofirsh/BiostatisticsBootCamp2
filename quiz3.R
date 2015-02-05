@@ -6,9 +6,28 @@
 # At a party a friend brags that they can tell the difference between cheap and expensive wine. 
 # You ask him to taste eight glasses wine for which you have randomized as 4 expensive and 4 cheap. 
 # Calculate a P-vlaue for the relevant exact hypothesis test using R's fisher.test function.
+# 
+#                     Actually Expensive    Actually Cheap
+# Guess Expensive	            4	            2
+# Guess Cheap	                1	            6
+# 
 
+dat <- matrix(c(4, 2, 1, 6), 2)
 
+fisher.test(dat, alternative = "two.sided")
 
+Fisher's Exact Test for Count Data
+
+data:  dat
+p-value = 0.1026
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+   0.5364938 682.2665965
+sample estimates:
+odds ratio 
+  9.470989 
+
+# p-value = 0.1026
 
 
 # Question 2
@@ -19,7 +38,7 @@
 #     T    P
 # S	3	1
 # N	2	4
-# Calculate Fisher's exact P-value for a one sided test of the relevant hypothesis.
+# Calculate Fishers exact P-value for a one sided test of the relevant hypothesis.
 # 
 # Around 0.05
 # Around 0.50
@@ -27,15 +46,39 @@
 # Less than 0.01
 # Around 0.10
 
+# sorting the matrix so treatment and Placebo will be in the rows, and Side and None will be in columns
+dat <- matrix(c(3, 2, 1, 4), 2)
+
+fisher.test(dat, alternative = "greater")
+
+# Fisher's Exact Test for Count Data
+# 
+# data:  dat
+# p-value = 0.2619
+# alternative hypothesis: true odds ratio is greater than 1
+# 95 percent confidence interval:
+#  0.3152217       Inf
+# sample estimates:
+# odds ratio 
+#   4.918388 
 
 
+# just testing if the original matrix will work the same ...
+dat <- matrix(c(3, 1, 2, 4), 2)
+fisher.test(dat, alternative = "greater")
+
+# Fisher's Exact Test for Count Data
+# 
+# data:  dat
+# p-value = 0.2619
 
 # Question 3
 # ----------
 # In a review of the author Jane Austen's work, scholars found the following relative frequencies of the words an'',that'' and “this''
 # 
-# an      that	this
-# 0.53	0.35	0.12
+#  an      that	    this
+# 0.53	    0.35	0.12
+#
 # An new story claimed to be Austen's was discovered with the word "an” 140 times, the word “that” 100 times and the word “this” 50 times. 
 # Are these counts consistent with Austen's traditional frequencies? Give a chi-squared P-value for the relevant test.
 # 
@@ -44,7 +87,65 @@
 # Around 0.25
 # Greater than 0.75
 
+n <- 140 + 10 + 50
 
+dat <- matrix(c( 0.53 * n, 0.35 * n, 0.12 * n,   140,10,50), nrow = 3, byrow = FALSE)
+#      [,1] [,2]
+# [1,]  106  140
+# [2,]   70   10
+# [3,]   24   50
+
+# H0 : The probabilities of each word are the same for every book
+# Ha : At least two are different
+
+dat.ex <- cbind(dat,dat[,1]+dat[,2])
+dat.ex <- rbind(dat.ex,colSums(dat.ex))
+m <- dat.ex
+# > dat.ex
+#       [,1] [,2] [,3]
+# [1,]  106  140  246
+# [2,]   70   10   80
+# [3,]   24   50   74
+# [4,]  200  200  400
+
+
+Observed.11 <- m[ 1 , 1]
+Expected.11 <- m[ 4 , 1] * ( m[ 1 , 3]  / m [ 4 , 3 ] )
+
+Observed.12 <- m[ 1 , 2]
+Expected.12 <- m[ 4 , 2] * ( m[ 1 , 3]  / m [ 4 , 3 ] )
+
+Observed.21 <- m[ 2 , 1]
+Expected.21 <- m[ 4 , 1] * ( m[ 2 , 3]  / m [ 4 , 3 ] )
+
+Observed.22 <- m[ 2 , 2]
+Expected.22 <- m[ 4 , 2] * ( m[ 2 , 3]  / m [ 4 , 3 ] )
+
+Observed.31 <- m[ 3 , 1]
+Expected.31 <- m[ 4 , 1] * ( m[ 3 , 3]  / m [ 4 , 3 ] )
+
+Observed.32 <- m[ 3 , 2]
+Expected.32 <- m[ 4 , 2] * ( m[ 3 , 3]  / m [ 4 , 3 ] )
+
+chi.square <-  ((Observed.11 - Expected.11)^2)/Expected.11 +
+    ((Observed.12 - Expected.12)^2)/Expected.12 +
+    ((Observed.21 - Expected.21)^2)/Expected.21 +
+    ((Observed.22 - Expected.22)^2)/Expected.22 +
+    ((Observed.31 - Expected.31)^2)/Expected.31 +
+    ((Observed.32 - Expected.32)^2)/Expected.32
+
+# > chi.square
+# [1] 58.83432
+
+pchisq(chi.square,2, lower.tail = FALSE)
+
+
+chisq.test(dat)
+
+# Pearson's Chi-squared test
+# 
+# data:  dat
+# X-squared = 64.0823, df = 2, p-value = 1.215e-14
 
 # Question 4
 # ----------
