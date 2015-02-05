@@ -54,47 +54,46 @@
 # 1e-5
 # 1e-3
 
-
-p1 <- 0.7
+X <- 70
 n1 <- 100
-p2 <- 0.15
+Y <- 15
 n2 <- 100
+
+p1 <- X / n1
+p2 <- Y / n2
+
+
+# difference base (lecture 4, pp 11)
+# ----------------------------------
+
+p.hat <- (X+Y)/(n1+n2)
+# [1] 0.425
+
+test.statistics.null <- (p1-p2)/ ( sqrt( p.hat * ( 1 - p.hat ) * ( 1 / n1 + 1 / n2  )  )   )
+# [1] 7.867184
+
+# Two sided test
+2 * pnorm(test.statistics.null, lower.tail = FALSE)
+# [1] 3.627132e-15
+
+# ratio base (just to compare to the diff base)
+# ---------------------------------------------
 
 RR <- p1 / p2
 
 RR.log <- log(RR) 
 # [1] 1.540445
 
-
-
 Standard.Error.Log.RR <- sqrt( ((1-p1)/(p1*n1)) + ((1-p2)/(p2*n2))   )
 # [1] 0.2468854
 
-2 * pnorm(0, mean = RR.log, sd = Standard.Error.Log.RR, lower.tail = TRUE  )
+# 2 * pnorm(0, mean = RR.log, sd = Standard.Error.Log.RR, lower.tail = TRUE  )
 
 z.1.minus.half.alpha <- RR.log / Standard.Error.Log.RR
 # [1] 6.239516
 
 alpha <- 1 * pnorm(-z.1.minus.half.alpha)
-
-RR <- exp(RR.log)
-# [1] 4.666667 
-
-Standard.Error.RR <- exp(Standard.Error.Log.RR)
-# 1.280032
-
-2 * pnorm(1, mean = RR, sd = Standard.Error.RR, lower.tail = TRUE  )
-
-# so the mean of the ratio is 4.666667, with sd of 1.280032 - Professors will be higer than the 2nd group
-#   as long as the (ratio - sd * w*z > 0)
-
-z <- RR / Standard.Error.RR
-# [1] 3.645741
-
-p.inside <- 1 - 2 * pnorm( q = -z, lower.tail = TRUE  )
-
-alpha <- 1 - p.inside
-# [1] 0.0001333111
+# [1] 2.194641e-10
 
 # Question 4
 # ----------
@@ -151,3 +150,17 @@ Standard.Error.RR <- exp(Standard.Error.Log.RR)
 # Around 0.5
 # Around 0.4
 # Around 0.3
+
+# null - Coke is the same like Pepsi, so p = 0.5 (should be no difference)
+binom.test(x=3, n = 4, p = 0.5, alternative = c("two.sided") )
+
+# Exact binomial test
+# 
+# data:  3 and 4
+# number of successes = 3, number of trials = 4, p-value = 0.625
+# alternative hypothesis: true probability of success is not equal to 0.5
+# 95 percent confidence interval:
+#     0.1941204 0.9936905
+# sample estimates:
+#     probability of success 
+# 0.75 
