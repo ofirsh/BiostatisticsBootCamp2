@@ -87,21 +87,23 @@ fisher.test(dat, alternative = "greater")
 # Around 0.25
 # Greater than 0.75
 
-n <- 140 + 10 + 50
+n <- 140 + 100 + 50
 
-observed <- c(140,10,50)
+observed <- c( 140 , 100 , 50)
 expected <- c( 0.53 * n, 0.35 * n, 0.12 * n )
 
-chi.square <- sum ( (observed - expected)^2 / expected )
-# [1] 90.5009
+chi.square <- sum ( ((observed - expected)^2) / expected )
+# [1] 7.882393
+pchisq(chi.square,1, lower.tail = FALSE)
+# [1] 0.004991838
 pchisq(chi.square,2, lower.tail = FALSE)
-# [1] 2.22833e-20
+# [1] 0.1850047
 
-dat <- matrix(c( 0.53 * n, 0.35 * n, 0.12 * n,   140,10,50), nrow = 3, byrow = FALSE)
-#      [,1] [,2]
-# [1,]  106  140
-# [2,]   70   10
-# [3,]   24   50
+dat <- matrix(c( 0.53 * n, 0.35 * n, 0.12 * n,   140,100,50), nrow = 3, byrow = FALSE)
+#         [,1] [,2]
+# [1,]    153.7  140
+# [2,]    101.5  100
+# [3,]    34.8   50
 
 # H0 : The probabilities of each word are the same for every book
 # Ha : At least two are different
@@ -109,12 +111,11 @@ dat <- matrix(c( 0.53 * n, 0.35 * n, 0.12 * n,   140,10,50), nrow = 3, byrow = F
 dat.ex <- cbind(dat,dat[,1]+dat[,2])
 dat.ex <- rbind(dat.ex,colSums(dat.ex))
 m <- dat.ex
-# > dat.ex
-#       [,1] [,2] [,3]
-# [1,]  106  140  246
-# [2,]   70   10   80
-# [3,]   24   50   74
-# [4,]  200  200  400
+#      [,1] [,2]  [,3]
+# [1,] 153.7  140 293.7
+# [2,] 101.5  100 201.5
+# [3,]  34.8   50  84.8
+# [4,] 290.0  290 580.0
 
 
 Observed.11 <- m[ 1 , 1]
@@ -143,19 +144,17 @@ chi.square <-  ((Observed.11 - Expected.11)^2)/Expected.11 +
     ((Observed.32 - Expected.32)^2)/Expected.32
 
 # > chi.square
-# [1] 58.83432
+# [1] 3.374748
 
 pchisq(chi.square,2, lower.tail = FALSE)
-# [1] 1.676059e-13
+# [1] 0.1850047
 
 chisq.test(dat)
 
-> chisq.test(dat)
-# 
 # Pearson's Chi-squared test
 # 
 # data:  dat
-# X-squared = 58.8343, df = 2, p-value = 1.676e-13
+# X-squared = 3.3747, df = 2, p-value = 0.185
 
 
 # Question 4
@@ -173,8 +172,23 @@ chisq.test(dat)
 # 140, 45 and 15 for each row
 # 33.3, 33.3 and 33.3 for each row
 
+dat <- matrix(c( 80,15,5,100, 60,30,10,100  ), nrow = 2, byrow = TRUE)
+dat.ex <- rbind(dat,colSums(dat))
 
+#       [,1] [,2] [,3] [,4]
+# [1,]   80   15    5  100
+# [2,]   60   30   10  100
+# [3,]  140   45   15  200
 
+#         (140/200)*100   (45/200)*100    (15/200)*100
+#         (140/200)*100   ...             ....
+
+(140/200)*100    
+# 70
+(45/200)*100
+# 22.5
+(15/200)*100
+# 7.5
 
 # Question 5
 # ----------
@@ -192,8 +206,54 @@ chisq.test(dat)
 # Yes, they do appear to be independent; we would fail to reject a chi squared test of independence.
 # Yes, they do appear to be independent; we would reject a chi squared test of independence.
 
+# Answer
+# ------
+# 
+# H0: the self report impact of the medication is independent from one week to the next
+# Ha: not independent
+ 
+# # under null hypothesis
+# P(Week1 == YES & week2 == YES) = P(Week1 == YES)*P(Week2 == YES)
 
+dat <- matrix(c( 43,4,8,45), nrow = 2, byrow = TRUE)
 
+#       [,1] [,2]
+# [1,]   43    4
+# [2,]    8   45
+
+dat.ex <- cbind(dat,dat[,1]+dat[,2])
+dat.ex <- rbind(dat.ex,colSums(dat.ex))
+# 
+#       [,1] [,2] [,3]
+# [1,]   43    4   47
+# [2,]    8   45   53
+# [3,]   51   49  100
+
+Observed.11 <- 43
+Expected.11 <- 100 * ( 51/100 ) * (47 / 100)
+
+Observed.12 <- 4
+Expected.12 <- 100 * ( 49/100 ) * (47 / 100)
+
+Observed.21 <- 8
+Expected.21 <- 100 * ( 51/100 ) * (53 / 100)
+
+Observed.22 <- 45
+Expected.22 <- 100 * ( 49/100 ) * (53 / 100)
+
+chi.square <-  ((Observed.11 - Expected.11)^2)/Expected.11 +
+    ((Observed.12 - Expected.12)^2)/Expected.12 +
+    ((Observed.21 - Expected.21)^2)/Expected.21 +
+    ((Observed.22 - Expected.22)^2)/Expected.22 
+
+pchisq(chi.square,1, lower.tail = FALSE)
+# [1] 2.397876e-14
+
+# Just to validate ...
+chisq.test(dat)
+#  p-value = 1.112e-13
+
+# No, they do not appear independent; we would reject a chi squared test of independence.
 
 # Question 6
 # -----------
@@ -201,10 +261,10 @@ chisq.test(dat)
 # She collected the location of the current and previous homes for subjects who moved across regions (Northeast, Souteast and West). 
 # She recorded the following:
 #     
-#     NE    SE	W
+#       NE    SE	W
 # NE	-	  267  255
 # SE	135	   _   139
-# W	240	 234	-
+# W	    240	  234	-
 #     
 # Here the row is current home region and the column is the region the person moved to.
 # 
@@ -219,6 +279,23 @@ chisq.test(dat)
 # The expected cell counts could not be determined.
 
 
+# Answer
+# -----
+# The expected cell counts would be the same as that of a test of independence.
+
+# Transform to the following matrix
+# 
+#         Way     Opposite
+# NE-SE   267         135
+# W-NE    240         255   
+# W-SE    234         139
+
+E.NE.SE <- ((267+240+234)/(267+240+234+135+255+139)) * (267+135)
+# [1] 234.5528
+E.SE.NE <- ((135+255+139)/(267+240+234+135+255+139)) * (267+135)
+# [1] 167.4472
+
+(267+135)/2
 
 
 # Question 7
@@ -235,17 +312,33 @@ chisq.test(dat)
 # We would reject a chi-squared GOF test; we can not rule out that the deck is standard
 # We would fail to reject a chi-squared GOF test; we can rule out that the deck is standard
 
+# H0 (Null hypothesis): the distribution of suits appear to be standard
+# Ha: the distribution of suits is NOT standard
+
+chi.square <- ((46-50)^2)/50 + ((54-50)^2)/50 + ((49-50)^2)/50 + ((51-50)^2)/50 
+# [1] 0.68
+
+pchisq(chi.square,1, lower.tail = FALSE)
+# [1] 0.4095867
+
+# since the value is bigger than 0.05 (95% confidence), we can't reject the null hypothesis, 
+#   hence the distribution appears standard
+
+#  "we can not rule out that the deck is standard" is true
+
 
 # Question 8
 # ----------
 # Consider the table below comparing the self reported job stress levels of three occupations. 
 # 100 people from each of three occupations were surveyed.
 # 
-# Job    High	Low
-# Exec	65	35
-# Prof	70	30
-# Lion Tamer	15	85
-# Researchers are interested in whether or not the perception of job stress differs by occupation. Using the relevant chi-sqared test. 
+# Job           High	Low
+# Exec	        65	    35
+# Prof	        70	    30
+# Lion Tamer	15	    85
+
+# Researchers are interested in whether or not the perception of job stress differs by occupation. 
+# Using the relevant chi-sqared test. 
 # What can be said about the researcher's hypothesis?
 # 
 # We reject; the stress levels do not appear to be different between jobs
@@ -253,4 +346,13 @@ chisq.test(dat)
 # We reject; the stress levels appear to differ between jobs
 # We fail to reject; the stress levels do not appear to be different between jobs
 
+dat <- matrix(c( 65,35,70,30,15,85), nrow = 3, byrow = TRUE)
 
+chisq.test(dat)
+
+# Pearson's Chi-squared test
+# 
+# data:  dat
+# X-squared = 74, df = 2, p-value < 2.2e-16
+
+# We reject; the stress levels appear to differ between jobs
